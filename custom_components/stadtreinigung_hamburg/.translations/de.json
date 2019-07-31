@@ -1,0 +1,20 @@
+{
+    "config": {
+        "error": {
+            "name_exists": "Name existiert bereits.",
+            "number_not_found": "Hausnummer wurde nicht gefunden.",
+            "street_not_found": "Straße wurde nicht gefunden."
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "name": "Name",
+                    "number": "Hausnummer",
+                    "street": "Straße"
+                },
+                "title": "Adresse in Hamburg"
+            }
+        },
+        "title": "Stadtreinigung Hamburg"
+    }
+}

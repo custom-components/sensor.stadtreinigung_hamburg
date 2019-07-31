@@ -1,0 +1,20 @@
+{
+  "config": {
+      "title": "Stadtreinigung Hamburg",
+      "step": {
+          "user": {
+              "title": "Address in Hamburg",
+              "data": {
+                  "name": "Name",
+                  "street": "Street",
+                  "number": "Street Number"
+              }
+          }
+      },
+      "error": {
+        "name_exists": "Name already exists",
+        "street_not_found": "Street not found.",
+        "number_not_found": "Number not found."
+    }
+  }
+}

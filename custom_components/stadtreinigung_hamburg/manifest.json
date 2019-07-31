@@ -1,0 +1,11 @@
+{
+    "domain": "stadtreinigung_hamburg",
+    "name": "Stadtreinigung Hamburg",
+    "documentation": "https://vigonotion.com",
+    "dependencies": [],
+    "codeowners": ["@vigonotion"],
+    "requirements": [
+        "stadtreinigung-hamburg==0.1.1"
+    ],
+    "config_flow": true
+  }
