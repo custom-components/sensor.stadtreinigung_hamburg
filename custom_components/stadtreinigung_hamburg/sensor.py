@@ -3,12 +3,13 @@ from homeassistant.components.sensor import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.util import Throttle, slugify
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, DEVICE_CLASS_TIMESTAMP
 from homeassistant.helpers.entity import Entity
 import logging
 from datetime import datetime
 from datetime import timedelta
 from homeassistant.core import HomeAssistant
+from typing import Optional
 
 from stadtreinigung_hamburg.StadtreinigungHamburg import StadtreinigungHamburg
 
@@ -96,6 +97,11 @@ class StadtreinigungHamburgSensor(Entity):
         return ""
 
     @property
+    def device_class(self) -> Optional[str]:
+        """Return the class of this device, from component DEVICE_CLASSES."""
+        return DEVICE_CLASS_TIMESTAMP
+
+    @property
     def device_state_attributes(self):
         return {ATTR_LAST_UPDATE: self._last_update}
 
@@ -121,7 +127,7 @@ class StadtreinigungHamburgSensor(Entity):
             )
 
             if collection:
-                self._state = collection.date.strftime("%Y-%m-%d")
+                self._state = collection.date
                 self._uuid = collection.uuid
                 self._last_update = self.data.last_update
 
