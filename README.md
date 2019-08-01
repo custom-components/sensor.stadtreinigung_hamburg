@@ -2,11 +2,14 @@
 
 <h2 align="center">Stadtreinigung Hamburg Custom Component</h2>
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
-<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-<a href="https://github.com/custom-components/sensor.stadtreinigung_hamburg/issues"><img alt="Open Issues" src="https://img.shields.io/github/issues/custom-components/sensor.stadtreinigung_hamburg"></a>
-<a href="https://github.com/custom-components/sensor.stadtreinigung_hamburg/releases"><img alt="Release" src="https://img.shields.io/github/release/custom-components/sensor.stadtreinigung_hamburg"></a>
+<p align="center">
+  <a href="https://github.com/custom-components/hacs"><img alt="Code style: black" src="https://img.shields.io/badge/HACS-Default-orange.svg"></a>
+  <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+  <a href="https://github.com/custom-components/sensor.stadtreinigung_hamburg/issues"><img alt="Open Issues" src="https://img.shields.io/github/issues/custom-components/sensor.stadtreinigung_hamburg"></a>
+  <a href="https://github.com/custom-components/sensor.stadtreinigung_hamburg/releases"><img alt="Release" src="https://img.shields.io/github/release/custom-components/sensor.stadtreinigung_hamburg"></a>
+</p>
 
+<p><br /></p>
 
 **This component will set up the following sensors**
 
