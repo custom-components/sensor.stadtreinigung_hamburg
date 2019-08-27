@@ -49,7 +49,7 @@ binary_sensor:
       srh_morgen_sesamstrasse_blau:
         friendly_name: "blaue Papiertonne (morgen)"
         value_template: >-
-          {% set collection = states.sensor.stadtreinigung_hamburg_sesamstrasse_blaue_papiertonne.state %}
+          {% set collection = as_timestamp(states.sensor.stadtreinigung_hamburg_sesamstrasse_blaue_papiertonne.state)|timestamp_custom("%Y-%m-%d") %}
           {% set tomorrow = (as_timestamp(now()) + 86400)|timestamp_custom("%Y-%m-%d") %}
           {{ collection == tomorrow }}
 ```
