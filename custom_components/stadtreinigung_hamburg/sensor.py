@@ -127,7 +127,7 @@ class StadtreinigungHamburgSensor(Entity):
             )
 
             if collection:
-                self._state = collection.date
+                self._state = collection.date.isoformat()
                 self._uuid = collection.uuid
                 self._last_update = self.data.last_update
 
@@ -157,7 +157,7 @@ class StadtreinigungHamburgData:
             self.data = StadtreinigungHamburg().get_garbage_collections(
                 self.street, self.number, self.use_asid, self.use_hnid
             )
-            self.last_update = datetime.today().strftime("%Y-%m-%d %H:%M")
+            self.last_update = datetime.today().isoformat()
         except Exception as error:
             _LOGGER.error("Error occurred while fetching data: %r", error)
             self.data = None
