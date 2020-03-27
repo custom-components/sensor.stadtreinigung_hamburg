@@ -44,7 +44,6 @@ class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow):
             except StreetNumberNotFoundException as error:
                 self._errors["number"] = "number_not_found"
                 numbers = [x[0] for x in error.args[1]]
-                print(numbers)
                 return self.async_show_form(
                     step_id="user",
                     data_schema=vol.Schema(
@@ -61,7 +60,6 @@ class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow):
 
             if not self._name_in_configuration_exists(name):
                 if self._errors == {}:
-                    print("CREATE ENTRY!")
                     return self.async_create_entry(
                         title=user_input[CONF_NAME], data=user_input
                     )
