@@ -9,6 +9,5 @@
     "requirements": [
         "stadtreinigung-hamburg==0.1.2"
     ],
-    "config_flow": true,
-    "homeassistant": "0.97.0"
+    "config_flow": true
 }

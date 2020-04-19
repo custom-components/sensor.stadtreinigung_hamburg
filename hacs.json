@@ -3,5 +3,6 @@
     "domains": [
         "sensor"
     ],
-    "country": "DE"
+    "country": "DE",
+    "homeassistant": "0.97.0"
 }
