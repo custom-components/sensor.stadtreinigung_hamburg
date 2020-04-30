@@ -4,5 +4,5 @@
         "sensor"
     ],
     "country": "DE",
-    "homeassistant": "0.97.0"
+    "homeassistant": "0.109.0"
 }
