@@ -4,5 +4,7 @@
         "sensor"
     ],
     "country": "DE",
-    "homeassistant": "0.109.0"
+    "homeassistant": "0.109.0",
+    "zip_release": true,
+    "filename": "stadtreinigung_hamburg.zip"
 }

@@ -38,7 +38,11 @@ class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow):
 
             try:
                 srh = StadtreinigungHamburg()
-                srh.get_garbage_collections(user_input["street"], user_input["number"])
+                await self.hass.async_add_executor_job(
+                    srh.get_garbage_collections,
+                    user_input["street"],
+                    user_input["number"],
+                )
             except StreetNotFoundException as error:
                 self._errors["street"] = "street_not_found"
             except StreetNumberNotFoundException as error:
