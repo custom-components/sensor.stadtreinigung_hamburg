@@ -1,13 +1,14 @@
 {
     "domain": "stadtreinigung_hamburg",
     "name": "Stadtreinigung Hamburg",
+    "version": "1.1.0",
     "documentation": "https://github.com/custom-components/sensor.stadtreinigung_hamburg",
     "dependencies": [],
     "codeowners": [
         "@vigonotion"
     ],
     "requirements": [
-        "stadtreinigung-hamburg==0.1.2"
+        "stadtreinigung-hamburg==0.3.0"
     ],
     "config_flow": true
 }

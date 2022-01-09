@@ -34,10 +34,10 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 )
 
 sensors = [
-    "grüne Biotonne",
-    "schwarze Restmülltonne",
-    "gelbe Wertstofftonne/-sack",
-    "blaue Papiertonne",
+    "Grüne Biotonne",
+    "Schwarze Restmülltonne",
+    "Gelbe Wertstofftonne/-sack",
+    "Blaue Papiertonne",
     "Weihnachtsbäume",
     "Laubsäcke",
 ]
@@ -102,8 +102,11 @@ class StadtreinigungHamburgSensor(Entity):
         return DEVICE_CLASS_TIMESTAMP
 
     @property
-    def device_state_attributes(self):
-        return {ATTR_LAST_UPDATE: self._last_update}
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        return {
+            ATTR_LAST_UPDATE: self._last_update,
+        }
 
     @property
     def unique_id(self):
