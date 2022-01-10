@@ -1,7 +1,6 @@
 {
     "domain": "stadtreinigung_hamburg",
     "name": "Stadtreinigung Hamburg",
-    "version": "1.1.0",
     "documentation": "https://github.com/custom-components/sensor.stadtreinigung_hamburg",
     "dependencies": [],
     "codeowners": [
