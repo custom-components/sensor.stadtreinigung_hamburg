@@ -20,7 +20,6 @@ def stadtreinigung_hamburg_names(hass: HomeAssistant):
 
 @config_entries.HANDLERS.register(DOMAIN)
 class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow):
-
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 

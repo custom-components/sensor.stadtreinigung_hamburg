@@ -122,6 +122,10 @@ class StadtreinigungHamburgSensor(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         self.data.update()
+
+        if not self.data.data:
+            return
+
         collections = sorted(self.data.data, key=lambda x: x.date)
 
         if collections:
@@ -151,6 +155,7 @@ class StadtreinigungHamburgData:
         self.use_asid = use_asid
         self.use_hnid = use_hnid
         self.last_update = None
+        self.data = None
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
     def update(self):
