@@ -1,4 +1,3 @@
-
 name: Release
 
 on:
@@ -28,14 +27,14 @@ jobs:
       # Pack the stadtreinigung_hamburg dir as a zip and upload to the release
       - name: ZIP stadtreinigung_hamburg Dir
         run: |
-          cd ${{ github.workspace }}/custom_components/stadtreinigung_hamburg
+          cd ${{ github.workspace }}/custom_components/hass_stadtreinigung_hamburg
           zip stadtreinigung_hamburg.zip -r ./
       - name: Upload zip to release
         uses: svenstaro/upload-release-action@v1-release
 
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ github.workspace }}/custom_components/stadtreinigung_hamburg/stadtreinigung_hamburg.zip
+          file: ${{ github.workspace }}/custom_components/hass_stadtreinigung_hamburg/stadtreinigung_hamburg.zip
           asset_name: stadtreinigung_hamburg.zip
           tag: ${{ github.ref }}
           overwrite: true
