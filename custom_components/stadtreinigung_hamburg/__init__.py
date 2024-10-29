@@ -1,9 +1,12 @@
 """The Stadtreinigung Hamburg integration"""
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import Config, HomeAssistant
+import homeassistant.helpers.config_validation as cv
+from homeassistant.const import CONF_NAME
 
 DOMAIN = "stadtreinigung_hamburg"
 
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 async def async_setup(hass, config):
     """Do not allow config via configuration.yaml"""

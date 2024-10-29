@@ -39,7 +39,7 @@ jobs:
       - name: Setup Python
         uses: "actions/setup-python@v1"
         with:
-          python-version: "3.8"
+          python-version: "3.12"
       - name: Install requirements
         run: python3 -m pip install -r requirements_test.txt
       - name: Run tests
@@ -50,6 +50,7 @@ jobs:
             --durations=10 \
             -n auto \
             --cov custom_components.stadtreinigung_hamburg \
+            --cov-report=term-missing \
             -o console_output_style=count \
             -p no:sugar \
             tests
