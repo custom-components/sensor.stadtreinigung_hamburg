@@ -1,10 +1,6 @@
 {
     "name": "Stadtreinigung Hamburg",
-    "domains": [
-        "sensor"
-    ],
-    "country": "DE",
-    "homeassistant": "0.109.0",
-    "zip_release": true,
-    "filename": "stadtreinigung_hamburg.zip"
+    "content_in_root": false,
+    "filename": "stadtreinigung_hamburg.zip",
+    "render_readme": true
 }
