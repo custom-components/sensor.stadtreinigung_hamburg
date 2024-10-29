@@ -50,6 +50,7 @@ jobs:
             --durations=10 \
             -n auto \
             --cov custom_components.stadtreinigung_hamburg \
+            --cov-report=term-missing \
             -o console_output_style=count \
             -p no:sugar \
             tests
