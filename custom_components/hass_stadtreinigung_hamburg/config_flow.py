@@ -46,7 +46,7 @@ class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow):
                 self._errors["street"] = "street_not_found"
             except StreetNumberNotFoundException as error:
                 self._errors["number"] = "number_not_found"
-                numbers = [x[0] for x in error.args[1]]
+                numbers = [x for x in error.args[1]]
                 return self.async_show_form(
                     step_id="user",
                     data_schema=vol.Schema(
