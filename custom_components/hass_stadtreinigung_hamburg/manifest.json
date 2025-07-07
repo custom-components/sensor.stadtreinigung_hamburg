@@ -7,7 +7,7 @@
         "@vigonotion"
     ],
     "requirements": [
-        "stadtreinigung-hamburg==0.3.2",
+        "stadtreinigung-hamburg==0.3.3",
         "lxml_html_clean"
     ],
     "config_flow": true,
