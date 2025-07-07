@@ -1,6 +1,6 @@
 """The Stadtreinigung Hamburg integration"""
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import Config, HomeAssistant
+from homeassistant.core import HomeAssistant
 
 DOMAIN = "stadtreinigung_hamburg"
 
