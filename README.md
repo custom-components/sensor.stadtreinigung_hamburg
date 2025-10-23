@@ -56,6 +56,92 @@ binary_sensor:
 
 Do you have some other examples? Make a PR and add it here.
 
+### Sensor: Next Emptying Date
+
+This example adds a `sensor` that displays the next emptying date. Below is a card wich uses this `sensor`. 
+In addition, <a href="https://github.com/piitaya/lovelace-mushroom/releases">https://github.com/piitaya/lovelace-mushroom/releases</a> is also required for this example.
+
+in configuration.yaml
+```yaml
+sensor:
+  - platform: template
+    sensors:
+      naechster_muelltermin:
+        friendly_name: "Nächster Mülltermin"
+        value_template: >
+          {% set sensors = {
+            'Restmüll': 'sensor.stadtreinigung_hamburg_mull_schwarze_restmulltonne',
+            'Papier': 'sensor.stadtreinigung_hamburg_mull_blaue_papiertonne',
+            'Gelber Sack': 'sensor.stadtreinigung_hamburg_mull_gelbe_wertstofftonne_sack',
+            'Biotonne': 'sensor.stadtreinigung_hamburg_mull_grune_biotonne'
+          } %}
+           {% set termine = namespace(liste=[]) %}
+          {% for typ, entity in sensors.items() %}
+            {% set wert = states(entity) %}
+            {% if wert not in ['unknown', 'unavailable', '', None] %}
+              {% set ts = as_timestamp(wert) %}
+              {% set termine.liste = termine.liste + [ {'typ': typ, 'ts': ts} ] %}
+            {% endif %}
+          {% endfor %}
+          {% if termine.liste | length > 0 %}
+            {% set wochentage = {
+                'Monday': 'Montag',
+                'Tuesday': 'Dienstag',
+                'Wednesday': 'Mittwoch',
+                'Thursday': 'Donnerstag',
+                'Friday': 'Freitag',
+                'Saturday': 'Samstag',
+                'Sunday': 'Sonntag'
+            } %}
+            {% set next = termine.liste | sort(attribute='ts') | first %}
+            {% set day_en = as_datetime(next.ts).strftime('%A') %}
+            {{ next.typ }} am {{ wochentage[day_en] }}, {{ as_datetime(next.ts).strftime('%d.%m.%Y') }}
+          {% else %}
+            Kein Termin gefunden
+          {% endif %}
+```
+mushroom-template-card:
+
+```yaml
+type: custom:mushroom-template-card
+entity: sensor.naechster_muelltermin
+primary: |
+  {{ states('sensor.naechster_muelltermin').split(' am ')[0] }}
+secondary: |
+  Abholung am {{ states('sensor.naechster_muelltermin').split(' am ')[1] }}
+icon: >
+  {% set typ = states('sensor.naechster_muelltermin').split(' am ')[0] | lower |
+  replace('ü', 'ue') %} {% if 'restmuell' in typ %}
+    mdi:trash-can
+  {% elif 'papier' in typ %}
+    mdi:recycle
+  {% elif 'gelbersack' in typ %}
+    mdi:sack
+  {% elif 'biotonne' in typ %}
+    mdi:leaf
+  {% else %}
+    mdi:trash-can-outline
+  {% endif %}
+icon_color: >
+  {% set typ = states('sensor.naechster_muelltermin').split(' am ')[0] | lower |
+  replace('ü', 'ue') %} {% if 'restmuell' in typ %}
+    grey
+  {% elif 'papier' in typ %}
+    blue
+  {% elif 'gelbersack' in typ %}
+    yellow
+  {% elif 'biotonne' in typ %}
+    green
+  {% else %}
+    red
+  {% endif %}
+tap_action:
+  action: more-info
+grid_options:
+  columns: 9
+  rows: 1
+```
+
 ## Contributions are welcome!
 
 If you want to contribute to this, please read the [Contribution guidelines](CONTRIBUTING.md)
