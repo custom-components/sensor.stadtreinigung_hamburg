@@ -1,6 +1,5 @@
 import logging
-from datetime import datetime, timedelta
-from typing import Literal, Optional
+from typing import Optional
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -12,12 +11,11 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
-from homeassistant.util import Throttle, slugify
-from stadtreinigung_hamburg.StadtreinigungHamburg import StadtreinigungHamburg
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import slugify
 
 _LOGGER = logging.getLogger(__name__)
-
-MIN_TIME_BETWEEN_UPDATES = timedelta(hours=1)
 
 CONF_STREET = "street"
 CONF_NUMBER = "number"
@@ -55,128 +53,59 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, config_entry: ConfigEntry, config_entries
-) -> bool:
-    """Add a weather entity from map location."""
-    config = config_entry.data
-    name = slugify(config[CONF_NAME])
-
-    data = StadtreinigungHamburgData(
-        config[CONF_NAME], config["street"], config["number"]
-    )
-
-    entries = []
-    for sensor in sensors:
-        entity = StadtreinigungHamburgSensor(sensor, data, name)
-        entries.append(entity)
-
-    config_entries(entries, True)
-    return True
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up sensors from a config entry."""
+    from . import DOMAIN
+    
+    coordinator = hass.data[DOMAIN][config_entry.entry_id]
+    
+    entities = []
+    for sensor_type in sensors:
+        entities.append(StadtreinigungHamburgSensor(coordinator, sensor_type))
+    
+    async_add_entities(entities)
 
 
-class StadtreinigungHamburgSensor(SensorEntity):
-    def __init__(self, container, data, location_name):
+class StadtreinigungHamburgSensor(CoordinatorEntity, SensorEntity):
+    """Representation of a Stadtreinigung Hamburg sensor."""
+    
+    def __init__(self, coordinator, container: str):
+        """Initialize the sensor."""
+        super().__init__(coordinator)
         self.container = container
-        self.data = data
-        self._location_name = location_name
-        self.data = data
-        self._state = None
-        self._last_update = None
-        self._uuid = None
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self.container
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement."""
-        return ""
-
-    @property
-    def device_class(self) -> Optional[str]:
-        """Return the class of this device, from component DEVICE_CLASSES."""
-        return SensorDeviceClass.TIMESTAMP
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        return {
-            ATTR_LAST_UPDATE: self._last_update,
-        }
-
-    @property
-    def unique_id(self) -> str:
+        self._attr_name = container
+        self._attr_icon = "mdi:recycle"
+        self._attr_device_class = SensorDeviceClass.TIMESTAMP
+        
         # Home Assistant automatically generates entity_id from unique_id and name.
         # Manual entity_id assignment is deprecated and can cause issues with entity registry.
-        return f"stadtreinigung_hamburg_{self._location_name}_{self.container}"
+        self._attr_unique_id = (
+            f"stadtreinigung_hamburg_{coordinator.location_name}_{container}"
+        )
 
     @property
-    def icon(self):
-        """Return the icon of the sensor."""
-        return "mdi:recycle"
-
-    async def async_update(self) -> None:
-        """Fetch new state data for the sensor.
-        This is the only method that should fetch new data for Home Assistant.
-        """
-        await self.data.async_update(self.hass)
-
-        if not self.data.data:
-            return
-
-        collections = sorted(self.data.data, key=lambda x: x.date)
-
+    def native_value(self) -> Optional[str]:
+        """Return the state of the sensor."""
+        if not self.coordinator.data:
+            return None
+        
+        collections = sorted(self.coordinator.data, key=lambda x: x.date)
+        
         if collections:
             collection = next(
                 (c for c in collections if c.container == self.container), None
             )
-
+            
             if collection:
-                self._state = collection.date.isoformat()
-                self._uuid = collection.uuid
-                self._last_update = self.data.last_update
-
-                _LOGGER.debug(collection)
-            else:
-                self._state = None
-        else:
-            self._state = None
-
-
-class StadtreinigungHamburgData:
-    """Get the latest data and update the states."""
-
-    def __init__(self, name, street, number, use_asid=False, use_hnid=False) -> None:
-        self.name = name
-        self.street = street
-        self.number = number
-        self.use_asid = use_asid
-        self.use_hnid = use_hnid
-        self.last_update = None
-        self.data = None
-
-    @Throttle(MIN_TIME_BETWEEN_UPDATES)
-    async def async_update(self, hass) -> None | Literal[False]:
-        _LOGGER.debug("Updating garbage collection dates")
-
-        try:
-            srh = StadtreinigungHamburg()
-            self.data = await hass.async_add_executor_job(
-                srh.get_garbage_collections,
-                self.street,
-                self.number,
-                self.use_asid,
-                self.use_hnid,
-            )
-            self.last_update = datetime.today().isoformat()
-        except Exception as error:
-            _LOGGER.error("Error occurred while fetching data: %r", error)
-            self.data = None
-            return False
+                return collection.date.isoformat()
+        
+        return None
+    
+    @property
+    def extra_state_attributes(self):
+        """Return the state attributes."""
+        # Coordinator automatically handles update timing
+        return {}
