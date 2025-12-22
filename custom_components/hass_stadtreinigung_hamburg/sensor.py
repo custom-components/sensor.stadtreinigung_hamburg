@@ -16,6 +16,8 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.util import slugify
 
+from . import DOMAIN
+
 _LOGGER = logging.getLogger(__name__)
 
 CONF_STREET = "street"
@@ -59,8 +61,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up sensors from a config entry."""
-    from . import DOMAIN
-
+    
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
     entities = []
@@ -88,7 +89,6 @@ class StadtreinigungHamburgSensor(CoordinatorEntity, SensorEntity):
         )
         
         # Group all sensors under a single device
-        from . import DOMAIN
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.location_name)},
             name=f"Stadtreinigung Hamburg {coordinator.location_name}",
