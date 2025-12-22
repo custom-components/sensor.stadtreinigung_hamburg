@@ -15,6 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import DOMAIN
+from .  import StadtreinigungHamburgCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,10 +75,10 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class StadtreinigungHamburgSensor(CoordinatorEntity, SensorEntity):
+class StadtreinigungHamburgSensor(CoordinatorEntity[StadtreinigungHamburgCoordinator], SensorEntity):
     """Representation of a Stadtreinigung Hamburg sensor."""
 
-    def __init__(self, coordinator, container: str):
+    def __init__(self, coordinator: StadtreinigungHamburgCoordinator, container: str) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.container = container
