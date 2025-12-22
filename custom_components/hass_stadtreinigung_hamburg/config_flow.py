@@ -1,10 +1,13 @@
-from homeassistant import config_entries
 import voluptuous as vol
-from homeassistant.util import slugify
+from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant, callback
-
-from stadtreinigung_hamburg.StadtreinigungHamburg import *
+from homeassistant.util import slugify
+from stadtreinigung_hamburg.StadtreinigungHamburg import (
+    StadtreinigungHamburg,
+    StreetNotFoundException,
+    StreetNumberNotFoundException,
+)
 
 DOMAIN = "stadtreinigung_hamburg"
 
@@ -18,18 +21,16 @@ def stadtreinigung_hamburg_names(hass: HomeAssistant):
     )
 
 
-@config_entries.HANDLERS.register(DOMAIN)
-class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow):
+class StadtreinigungHamburgConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize."""
         self._street = None
         self._number = None
         self._errors = {}
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(self, user_input=None) -> config_entries.ConfigFlowResult:
         self._errors = {}
 
         if user_input is not None:
