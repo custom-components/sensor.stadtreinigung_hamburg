@@ -9,12 +9,10 @@ from homeassistant.components.sensor import (
     SensorEntity,
 )
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.util import slugify
 
 from . import DOMAIN
 
@@ -61,7 +59,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up sensors from a config entry."""
-    
+
     coordinator = hass.data[DOMAIN][config_entry.entry_id]
 
     entities = []
@@ -87,7 +85,7 @@ class StadtreinigungHamburgSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = (
             f"stadtreinigung_hamburg_{coordinator.location_name}_{container}"
         )
-        
+
         # Group all sensors under a single device
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.location_name)},
