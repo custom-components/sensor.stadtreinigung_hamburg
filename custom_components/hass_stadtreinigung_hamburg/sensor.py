@@ -1,15 +1,18 @@
-import voluptuous as vol
-from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorDeviceClass
-import homeassistant.helpers.config_validation as cv
-from homeassistant.util import Throttle, slugify
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
-from homeassistant.helpers.entity import Entity
 import logging
 from datetime import datetime, timedelta
-from homeassistant.core import HomeAssistant
-from typing import Optional
+from typing import Literal, Optional
 
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+from homeassistant.components.sensor import (
+    PLATFORM_SCHEMA,
+    SensorDeviceClass,
+    SensorEntity,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
+from homeassistant.core import HomeAssistant
+from homeassistant.util import Throttle, slugify
 from stadtreinigung_hamburg.StadtreinigungHamburg import StadtreinigungHamburg
 
 _LOGGER = logging.getLogger(__name__)
@@ -64,17 +67,18 @@ async def async_setup_entry(
 
     entries = []
     for sensor in sensors:
-        entity = StadtreinigungHamburgSensor(sensor, data)
-        entity.entity_id = "sensor.stadtreinigung_hamburg_{}_{}".format(name, sensor)
+        entity = StadtreinigungHamburgSensor(sensor, data, name)
         entries.append(entity)
 
     config_entries(entries, True)
     return True
 
 
-class StadtreinigungHamburgSensor(Entity):
-    def __init__(self, container, data):
+class StadtreinigungHamburgSensor(SensorEntity):
+    def __init__(self, container, data, location_name):
         self.container = container
+        self.data = data
+        self._location_name = location_name
         self.data = data
         self._state = None
         self._last_update = None
@@ -108,19 +112,21 @@ class StadtreinigungHamburgSensor(Entity):
         }
 
     @property
-    def unique_id(self):
-        return "stadtreinigung_hamburg" + self.data.name + self.container
+    def unique_id(self) -> str:
+        # Home Assistant automatically generates entity_id from unique_id and name.
+        # Manual entity_id assignment is deprecated and can cause issues with entity registry.
+        return f"stadtreinigung_hamburg_{self._location_name}_{self.container}"
 
     @property
     def icon(self):
         """Return the icon of the sensor."""
         return "mdi:recycle"
 
-    def update(self):
+    async def async_update(self) -> None:
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        self.data.update()
+        await self.data.async_update(self.hass)
 
         if not self.data.data:
             return
@@ -147,7 +153,7 @@ class StadtreinigungHamburgSensor(Entity):
 class StadtreinigungHamburgData:
     """Get the latest data and update the states."""
 
-    def __init__(self, name, street, number, use_asid=False, use_hnid=False):
+    def __init__(self, name, street, number, use_asid=False, use_hnid=False) -> None:
         self.name = name
         self.street = street
         self.number = number
@@ -157,12 +163,17 @@ class StadtreinigungHamburgData:
         self.data = None
 
     @Throttle(MIN_TIME_BETWEEN_UPDATES)
-    def update(self):
+    async def async_update(self, hass) -> None | Literal[False]:
         _LOGGER.debug("Updating garbage collection dates")
 
         try:
-            self.data = StadtreinigungHamburg().get_garbage_collections(
-                self.street, self.number, self.use_asid, self.use_hnid
+            srh = StadtreinigungHamburg()
+            self.data = await hass.async_add_executor_job(
+                srh.get_garbage_collections,
+                self.street,
+                self.number,
+                self.use_asid,
+                self.use_hnid,
             )
             self.last_update = datetime.today().isoformat()
         except Exception as error:
