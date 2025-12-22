@@ -16,7 +16,7 @@ PLATFORMS = [Platform.SENSOR]
 UPDATE_INTERVAL = timedelta(hours=1)
 
 
-async def async_setup(hass, config):
+async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Do not allow config via configuration.yaml"""
     return True
 
@@ -70,7 +70,7 @@ class StadtreinigungHamburgCoordinator(DataUpdateCoordinator):
         self.number = number
         self.location_name = name
 
-    async def _async_update_data(self):
+    async def _async_update_data(self) -> list:
         """Fetch data from API."""
         try:
             srh = StadtreinigungHamburg()

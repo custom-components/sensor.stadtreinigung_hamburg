@@ -44,7 +44,12 @@ sensors = [
 ]
 
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+async def async_setup_platform(
+    hass: HomeAssistant,
+    config: dict,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: dict | None = None,
+) -> None:
     """Old way of setting up components.
 
     Can only be called when a user accidentally mentions stadtreinigung_hamburg in the
@@ -113,7 +118,7 @@ class StadtreinigungHamburgSensor(CoordinatorEntity, SensorEntity):
         return None
 
     @property
-    def extra_state_attributes(self):
+    def extra_state_attributes(self) -> dict:
         """Return the state attributes."""
         # Coordinator automatically handles update timing
         return {}
