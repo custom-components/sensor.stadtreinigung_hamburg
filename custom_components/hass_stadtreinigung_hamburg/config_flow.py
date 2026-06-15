@@ -13,7 +13,7 @@ DOMAIN = "stadtreinigung_hamburg"
 
 
 @callback
-def stadtreinigung_hamburg_names(hass: HomeAssistant):
+def stadtreinigung_hamburg_names(hass: HomeAssistant) -> set[str]:
     """Return configurations of Stadtreinigung Hamburg component."""
     return set(
         (slugify(entry.data[CONF_NAME]))
