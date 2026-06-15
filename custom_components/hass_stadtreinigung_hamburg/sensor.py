@@ -12,7 +12,7 @@ from homeassistant.components.sensor import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
-from homeassistant.util import Throttle, slugify
+from homeassistant.util import Throttle
 from stadtreinigung_hamburg.StadtreinigungHamburg import StadtreinigungHamburg
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,15 +59,13 @@ async def async_setup_entry(
 ) -> bool:
     """Add a weather entity from map location."""
     config = config_entry.data
-    name = slugify(config[CONF_NAME])
-
     data = StadtreinigungHamburgData(
         config[CONF_NAME], config["street"], config["number"]
     )
 
     entries = []
     for sensor in sensors:
-        entity = StadtreinigungHamburgSensor(sensor, data, name)
+        entity = StadtreinigungHamburgSensor(sensor, data)
         entries.append(entity)
 
     config_entries(entries, True)
@@ -75,10 +73,8 @@ async def async_setup_entry(
 
 
 class StadtreinigungHamburgSensor(SensorEntity):
-    def __init__(self, container, data, location_name):
+    def __init__(self, container, data):
         self.container = container
-        self.data = data
-        self._location_name = location_name
         self.data = data
         self._state = None
         self._last_update = None
@@ -113,9 +109,7 @@ class StadtreinigungHamburgSensor(SensorEntity):
 
     @property
     def unique_id(self) -> str:
-        # Home Assistant automatically generates entity_id from unique_id and name.
-        # Manual entity_id assignment is deprecated and can cause issues with entity registry.
-        return f"stadtreinigung_hamburg_{self._location_name}_{self.container}"
+        return "stadtreinigung_hamburg" + self.data.name + self.container
 
     @property
     def icon(self):
