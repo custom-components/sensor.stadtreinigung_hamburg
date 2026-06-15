@@ -1,5 +1,5 @@
 import logging
-from typing import Optional
+from datetime import datetime
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -13,6 +13,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt as dt_util, slugify
 
 from . import DOMAIN
 from .  import StadtreinigungHamburgCoordinator
@@ -85,11 +86,9 @@ class StadtreinigungHamburgSensor(CoordinatorEntity[StadtreinigungHamburgCoordin
         self._attr_name = container
         self._attr_icon = "mdi:recycle"
         self._attr_device_class = SensorDeviceClass.TIMESTAMP
-
-        # Home Assistant automatically generates entity_id from unique_id and name.
-        # Manual entity_id assignment is deprecated and can cause issues with entity registry.
+        self.entity_id = f"sensor.stadtreinigung_hamburg_{slugify(coordinator.location_name)}_{container}"
         self._attr_unique_id = (
-            f"stadtreinigung_hamburg_{coordinator.location_name}_{container}"
+            f"stadtreinigung_hamburg{coordinator.location_name}{container}"
         )
 
         # Group all sensors under a single device
@@ -101,7 +100,7 @@ class StadtreinigungHamburgSensor(CoordinatorEntity[StadtreinigungHamburgCoordin
         )
 
     @property
-    def native_value(self) -> Optional[str]:
+    def native_value(self) -> datetime | None:
         """Return the state of the sensor."""
         if not self.coordinator.data:
             return None
@@ -114,7 +113,7 @@ class StadtreinigungHamburgSensor(CoordinatorEntity[StadtreinigungHamburgCoordin
             )
 
             if collection:
-                return collection.date.isoformat()
+                return collection.date.replace(tzinfo=dt_util.UTC)
 
         return None
 
